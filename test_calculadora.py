@@ -20,31 +20,47 @@ def test_desconto_invalido():
         calcular_total([(100.0, 1)], desconto_percentual=110)
 
 
-def test_cupom_soma_ao_desconto_percentual():
-    itens = [(100.0, 2)]
+def test_cupom_devops10_funciona_com_minusculas():
+    itens = [(200.0, 1)]
 
-    # 10% + 15% = 25% sobre 200.0
-    assert calcular_total(itens, desconto_percentual=10, cupom="PROMO15") == 150.0
+    assert calcular_total(itens, cupom="devops10") == 180.0
 
 
-def test_cupom_sem_desconto_percentual():
+def test_cupom_soma_com_desconto_existente():
     itens = [(100.0, 1)]
 
-    assert calcular_total(itens, cupom="PROMO10") == 90.0
+    total = calcular_total(
+        itens,
+        desconto_percentual=5,
+        cupom="DEVOPS10",
+    )
+
+    assert total == 85.0
 
 
-def test_cupom_inexistente_nao_altera_o_total():
-    itens = [(100.0, 1)]
+def test_cupom_invalido_gera_erro():
+    with pytest.raises(ValueError):
+        calcular_total([(100.0, 1)], cupom="XPTO")
 
-    assert calcular_total(itens, cupom="NAO_EXISTE") == 100.0
+
+def test_cupom_boasvindas5():
+    itens = [(200.0, 1)]
+
+    assert calcular_total(itens, cupom="BOASVINDAS5") == 190.0
+
+
+def test_cupom_ignora_espacos_em_volta():
+    itens = [(200.0, 1)]
+
+    assert calcular_total(itens, cupom="  devops10  ") == 180.0
 
 
 def test_desconto_somado_nao_passa_de_cem_por_cento():
     itens = [(100.0, 1)]
 
-    # 80% + 50% = 130%, limitado a 100%: o total zera em vez de ficar negativo
-    assert calcular_total(itens, desconto_percentual=80, cupom="METADE") == 0.0
+    # 100% + 10% = 110%, limitado a 100%: o total zera em vez de ficar negativo
+    assert calcular_total(itens, desconto_percentual=100, cupom="DEVOPS10") == 0.0
 
 
-def test_obter_desconto_do_cupom_sem_cupom():
+def test_sem_cupom_nao_concede_desconto():
     assert obter_desconto_do_cupom(None) == 0

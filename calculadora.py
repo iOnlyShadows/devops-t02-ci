@@ -1,20 +1,24 @@
-CUPONS = {
-    "PROMO10": 10,
-    "PROMO15": 15,
-    "METADE": 50,
+CUPONS_PERCENTUAIS = {
+    "DEVOPS10": 10,
+    "BOASVINDAS5": 5,
 }
 
 
 def obter_desconto_do_cupom(cupom):
     """
-    Devolve o percentual de desconto de um cupom.
+    Devolve o percentual de desconto de um cupom promocional.
 
-    Cupom ausente ou desconhecido nao concede desconto.
+    O codigo e normalizado antes da busca, entao espacos em volta e
+    diferencas de caixa nao impedem o reconhecimento do cupom.
     """
     if cupom is None:
         return 0
 
-    return CUPONS.get(cupom, 0)
+    codigo = cupom.strip().upper()
+    if codigo not in CUPONS_PERCENTUAIS:
+        raise ValueError("Cupom promocional invalido.")
+
+    return CUPONS_PERCENTUAIS[codigo]
 
 
 def calcular_total(itens, desconto_percentual=0, cupom=None):
